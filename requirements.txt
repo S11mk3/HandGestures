@@ -1,0 +1,7 @@
+mediapipe==1.0.1
+# The OpenCV build mediapipe itself depends on. Don't add opencv-python too: both install cv2.
+opencv-contrib-python==5.0.0.93
+Pillow==12.1.1
+PyAutoGUI==0.9.54
+pystray==0.19.5
+pywin32==311
