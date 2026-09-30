@@ -26,8 +26,15 @@ class GestureDetector:
         """What the detector sees, for the preview: e.g. "fist" or "open palm + open palm"."""
         if self._two_hand_mode:
             return " + ".join(pose.value if pose else "?" for pose in self._two_hands.poses)
+        if self._one_hand.is_pinched:
+            return "pinch"
         pose = self._one_hand.pose
         return pose.value if pose else "no hand"
+
+    @property
+    def pointer_position(self) -> tuple[float, float] | None:
+        """Where the pointing fingertip puts the pointer, in fractions of the frame; None while not pointing."""
+        return None if self._two_hand_mode else self._one_hand.pointer_position
 
     def update(self, hands: list[Landmarks], now: float, paused: bool = False) -> list[GestureEvent]:
         """Process one frame: the hands seen (none, one, or two ordered left to right) at `now` seconds.

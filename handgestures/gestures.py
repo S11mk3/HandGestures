@@ -14,6 +14,8 @@ class Gesture(Enum):
     SCROLL = "scroll"
     HANDS_APART = "hands apart"
     HANDS_TOGETHER = "hands together"
+    PINCH = "pinch"
+    DOUBLE_PINCH = "double pinch"
 
 
 OPPOSITE = {
@@ -30,11 +32,6 @@ OPPOSITE = {
 class GestureEvent:
     gesture: Gesture
     scroll_steps: int = 0  # SCROLL only; positive = up
-
-    def __str__(self):
-        if self.gesture is Gesture.SCROLL:
-            return f"{self.gesture.value} {self.scroll_steps:+d}"
-        return self.gesture.value
 
 
 class Cooldown:

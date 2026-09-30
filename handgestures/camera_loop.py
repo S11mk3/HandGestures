@@ -12,7 +12,6 @@ from .gestures import GestureEvent
 from .hand_tracker import HandTracker
 from .paths import LOG_PATH
 from .preview_window import Overlay, PreviewWindow
-from .recorder import Recorder
 
 log = logging.getLogger(__name__)
 
@@ -44,11 +43,10 @@ class FrameStats:
 
 
 class CameraLoop:
-    def __init__(self, state: AppState, config: Config, actions: Actions, recorder: Recorder | None = None):
+    def __init__(self, state: AppState, config: Config, actions: Actions):
         self._state = state
         self._config = config
         self._actions = actions
-        self._recorder = recorder
         self._stop_requested = threading.Event()
         self._thread = threading.Thread(target=self._run, name="camera", daemon=True)
 
@@ -88,16 +86,18 @@ class CameraLoop:
             frame = camera.latest_frame()
             if frame is None:
                 continue  # no new frame yet; check for stop and wait again
-            hands = tracker.find_hands(frame.image)
+            # A pointing hand can't be half of a two-hand gesture (those need open palms), and
+            # searching for a second hand every few frames would make the pointer stutter.
+            hands = tracker.find_hands(frame.image, look_for_second_hand=detector.pointer_position is None)
             now = time.monotonic()
 
             events = detector.update(hands, now, paused=self._state.paused)
+            # Before any click, so it lands where the pointer is held for it.
+            self._move_pointer(detector.pointer_position)
             for event in events:
                 last_action, last_action_time = describe(event), now
                 log.info("Gesture: %s -> %s", event.gesture.value, last_action)
                 self._perform(event)
-            if self._recorder:
-                self._recorder.add_frame(now, hands, events)
             if now - last_action_time > LAST_ACTION_DISPLAY_S:
                 last_action = ""
             stats.add_frame(frame.capture_time, now)
@@ -115,3 +115,9 @@ class CameraLoop:
             perform(self._actions, event)
         except Exception:
             log.exception("Action for %s failed", event.gesture.value)
+
+    def _move_pointer(self, hand_position: tuple[float, float] | None):
+        try:
+            self._actions.move_pointer(hand_position)
+        except Exception:
+            log.exception("Moving the pointer failed")
