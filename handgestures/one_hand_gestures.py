@@ -1,4 +1,5 @@
-"""Gestures made with one hand: swiping an open palm, holding a fist, scrolling with two fingers."""
+"""Gestures made with one hand: swiping an open palm, holding a fist, scrolling with two fingers,
+and pointing with the index finger to move the cursor and pinch to click."""
 from collections import deque
 from math import copysign, dist
 
@@ -6,6 +7,7 @@ from .config import Config
 from .gestures import Cooldown, Gesture, GestureEvent
 from .hand_landmarks import HandLandmark, Landmarks
 from .hand_poses import Pose, PoseConfirmer, classify_pose, palm_center
+from .pointer_gestures import PointerGestures
 
 # Reversing the scroll direction takes this much extra travel, as a fraction of a
 # scroll step, so hand jitter can't scroll back and forth.
@@ -30,12 +32,22 @@ class OneHandGestures:
         self._swipe_cooldown = Cooldown(config)
         self._swipes_blocked_after_entry: set[Gesture] = set()
         self._entry_time = float("-inf")
+        self._pointer = PointerGestures(config)
         self._reset_pose_tracking()
 
     @property
     def pose(self) -> Pose | None:
         """The confirmed pose; None while no hand is visible."""
         return self._pose.pose
+
+    @property
+    def pointer_position(self) -> tuple[float, float] | None:
+        """Where the pointing fingertip puts the pointer, in fractions of the frame; None while not pointing."""
+        return self._pointer.position
+
+    @property
+    def is_pinched(self) -> bool:
+        return self._pointer.is_pinched
 
     def _reset_pose_tracking(self):
         """Forget the current pose's progress; called when the pose changes or the hand is lost."""
@@ -45,6 +57,7 @@ class OneHandGestures:
         self._fist_hold_reported = False
         self._scroll_anchor_y: float | None = None
         self._last_scroll_steps = 0
+        self._pointer.reset()
 
     def update(self, landmarks: Landmarks | None, now: float, paused: bool = False) -> list[GestureEvent]:
         """Process one frame: the hand's landmarks (None if no hand), seen at `now` seconds.
@@ -57,10 +70,14 @@ class OneHandGestures:
         if not self._hand_in_view:
             self._on_hand_appeared(landmarks, now)
         self._hand_last_seen_time = now
-        if self._pose.update(classify_pose(landmarks), now):
+        seen_pose = classify_pose(landmarks)
+        if self.pose is Pose.POINTING and self._pointer.holds_pinch(landmarks):
+            seen_pose = Pose.POINTING  # a pinch often curls the index finger; it isn't a fist
+        if self._pose.update(seen_pose, now):
             self._reset_pose_tracking()
 
         if paused:
+            self._pointer.reset()
             return []
         if self.pose is Pose.FIST:
             return self._detect_fist_hold(landmarks, now)
@@ -68,6 +85,8 @@ class OneHandGestures:
             return self._detect_swipe(landmarks, now)
         if self.pose is Pose.TWO_FINGERS:
             return self._detect_scroll(landmarks)
+        if self.pose is Pose.POINTING:
+            return self._pointer.update(landmarks, now)
         return []
 
     def _on_no_hand(self, now: float):

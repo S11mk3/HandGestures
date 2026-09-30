@@ -21,7 +21,6 @@ WHITE = (255, 255, 255)
 GREEN = (0, 200, 0)
 YELLOW = (0, 255, 255)
 DARK_RED = (0, 0, 180)
-DARK_BLUE = (140, 60, 0)
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 
@@ -33,7 +32,6 @@ class Overlay:
     speed: str  # e.g. "24 fps, 45 ms"
     last_action: str  # empty when there's none to show
     paused: bool
-    prompt: str = ""  # instructions during a guided recording
 
 
 class PreviewWindow:
@@ -88,11 +86,6 @@ def draw_overlay(image, overlay: Overlay):
     def draw_text(text: str, baseline_y: int, color=YELLOW):
         cv2.putText(image, text, (padding, baseline_y), FONT, font_scale, color, text_thickness)
 
-    def draw_banner(text: str, background_color):
-        banner_height = int(line_height * 1.7)
-        cv2.rectangle(image, (0, height - banner_height), (width, height), background_color, cv2.FILLED)
-        draw_text(text, height - (banner_height - line_height // 2) // 2, WHITE)
-
     for hand in overlay.hands:
         points = [(int(x * width), int(y * height)) for x, y, _ in hand]
         for start, end in HAND_CONNECTIONS:
@@ -105,9 +98,9 @@ def draw_overlay(image, overlay: Overlay):
     if overlay.last_action:
         draw_text(f"Last: {overlay.last_action}", 3 * line_height)
     if overlay.paused:
-        draw_banner("PAUSED - resume from tray", DARK_RED)
-    elif overlay.prompt:
-        draw_banner(overlay.prompt, DARK_BLUE)
+        banner_height = int(line_height * 1.7)
+        cv2.rectangle(image, (0, height - banner_height), (width, height), DARK_RED, cv2.FILLED)
+        draw_text("PAUSED - resume from tray", height - (banner_height - line_height // 2) // 2, WHITE)
 
 
 def _pin_window(previous_foreground_window: int, image_size: tuple[int, int]):

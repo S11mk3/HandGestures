@@ -14,4 +14,3 @@ else:
 
 CONFIG_PATH = DATA_DIR / "config.json"
 LOG_PATH = DATA_DIR / "handgestures.log"
-RECORDINGS_DIR = DATA_DIR / "recordings"

@@ -51,6 +51,19 @@ class Config:
     scroll_step: float = 0.03
     scroll_amount: int = 120
 
+    # Pointer: pointing with the index finger moves the cursor like a finger on a touchpad,
+    # pointer_speed screen widths for each frame width the fingertip travels.
+    pointer_speed: float = 1.0
+    # Pointer smoothing: pointer_smoothing is how quickly (Hz) a still fingertip is followed,
+    # lower = steadier but laggier; pointer_responsiveness speeds that up as the finger moves faster.
+    pointer_smoothing: float = 2.0
+    pointer_responsiveness: float = 30.0
+    # While pointing, thumb and index fingertips closer than pinch_distance (fraction of the
+    # palm's length) click. Two pinches within double_pinch_s double click: keep it within
+    # Windows' double-click speed (0.5 s by default).
+    pinch_distance: float = 0.3
+    double_pinch_s: float = 0.5
+
 
 def load_config() -> Config:
     """Return the settings from config.json, with defaults for any it lacks.

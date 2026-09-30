@@ -1,11 +1,9 @@
 # Python
 .venv/
 __pycache__/
-.pytest_cache/
 
 # Created at run time
 models/
-recordings/
 config.json
 handgestures.log
 

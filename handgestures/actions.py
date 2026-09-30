@@ -12,8 +12,8 @@ from .gestures import Gesture, GestureEvent
 
 log = logging.getLogger(__name__)
 
-# We never move the mouse, so the corner fail-safe would only cause spurious errors,
-# and the default 0.1 s pause after every call would stall the camera loop.
+# Pointing can leave the cursor in a screen corner, where pyautogui's fail-safe would make
+# every later call fail, and the default 0.1 s pause after every call would stall the camera loop.
 pyautogui.FAILSAFE = False
 pyautogui.PAUSE = 0
 
@@ -29,6 +29,8 @@ ACTION_NAMES = {
     Gesture.SCROLL: "Scroll",
     Gesture.HANDS_APART: "Maximize",
     Gesture.HANDS_TOGETHER: "Restore down",
+    Gesture.PINCH: "Click",
+    Gesture.DOUBLE_PINCH: "Double click",
 }
 
 
@@ -41,6 +43,8 @@ class Actions(Protocol):
     def switch_to_previous_window(self) -> None: ...
     def toggle_media_playback(self) -> None: ...
     def scroll(self, steps: int) -> None: ...
+    def move_pointer(self, hand_position: tuple[float, float] | None) -> None: ...
+    def click(self) -> None: ...
 
 
 def perform(actions: Actions, event: GestureEvent) -> None:
@@ -61,6 +65,9 @@ def perform(actions: Actions, event: GestureEvent) -> None:
             actions.maximize_active_window()
         case Gesture.HANDS_TOGETHER:
             actions.restore_down_active_window()
+        case Gesture.PINCH | Gesture.DOUBLE_PINCH:
+            # A double pinch's second click lands exactly on the first, so Windows sees a double click.
+            actions.click()
 
 
 def describe(event: GestureEvent) -> str:
@@ -71,11 +78,51 @@ def describe(event: GestureEvent) -> str:
     return name
 
 
+class TouchpadCursor:
+    """Moves the cursor like a finger on a touchpad: by how far the fingertip moves, from
+    wherever the cursor already is, so it never jumps when the hand starts pointing."""
+
+    def __init__(self, config: Config):
+        self._speed = config.pointer_speed
+        # Positions are fractions of the frame's width and height; scale y so both axes move alike.
+        self._frame_aspect_ratio = config.frame_height / config.frame_width
+        self._anchor: tuple[tuple[float, float], tuple[int, int]] | None = None  # (hand, cursor) to move from
+        self._last_target: tuple[int, int] | None = None
+
+    def reset(self):
+        """The hand stopped pointing: the next position starts from wherever the cursor is then."""
+        self._anchor = None
+
+    def target(self, hand: tuple[float, float], cursor: tuple[int, int], screen_width: int,
+               bounds: tuple[int, int, int, int]) -> tuple[int, int]:
+        """Where the cursor goes for the fingertip at `hand`.
+
+        `cursor` is where it is now, `screen_width` (pixels) sets the speed, and `bounds` is
+        (left, top, right, bottom) of the area the cursor stays in, right and bottom excluded.
+        The same fingertip position always gives the same pixel, until the cursor is moved some other way.
+        """
+        if self._anchor is None or cursor != self._last_target:
+            # Just started pointing, or the cursor was moved some other way (e.g. by the mouse): go on from there.
+            self._anchor = (hand, cursor)
+        (anchor_hand_x, anchor_hand_y), (anchor_x, anchor_y) = self._anchor
+        pixels_per_frame_width = self._speed * screen_width
+        x = round(anchor_x + (hand[0] - anchor_hand_x) * pixels_per_frame_width)
+        y = round(anchor_y + (hand[1] - anchor_hand_y) * pixels_per_frame_width * self._frame_aspect_ratio)
+        left, top, right, bottom = bounds
+        target = (min(max(x, left), right - 1), min(max(y, top), bottom - 1))
+        if target != (x, y):
+            # Pushed past the edge: moving back should move the cursor back right away.
+            self._anchor = (hand, target)
+        self._last_target = target
+        return target
+
+
 class WindowsActions:
     """Performs the actions for real."""
 
     def __init__(self, config: Config, ignored_window_titles: set[str]):
         self._scroll_amount = config.scroll_amount
+        self._touchpad = TouchpadCursor(config)
         self._ignored_window_titles = ignored_window_titles
         self._minimized_windows: list[int] = []  # most recent last
 
@@ -124,6 +171,25 @@ class WindowsActions:
     def scroll(self, steps: int):
         pyautogui.scroll(steps * self._scroll_amount)
 
+    def move_pointer(self, hand_position: tuple[float, float] | None):
+        # win32api rather than pyautogui, whose mouse functions only know the main screen.
+        if hand_position is None:
+            self._touchpad.reset()
+            return
+        try:
+            cursor = win32api.GetCursorPos()
+            target = self._touchpad.target(
+                hand_position, cursor, win32api.GetSystemMetrics(win32con.SM_CXSCREEN), _all_screens_bounds())
+            if target != cursor:
+                win32api.SetCursorPos(target)
+        except win32api.error:
+            # The lock screen and UAC prompts don't let us read or move the cursor.
+            self._touchpad.reset()
+
+    def click(self):
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+
     def _active_app_window(self) -> int | None:
         """The foreground window, unless it's hidden, the desktop or taskbar, or one of ours."""
         window = win32gui.GetForegroundWindow()
@@ -143,6 +209,15 @@ def _can_maximize(window: int) -> bool:
 def _is_maximized(window: int) -> bool:
     _, show_state, *_ = win32gui.GetWindowPlacement(window)
     return show_state == win32con.SW_SHOWMAXIMIZED
+
+
+def _all_screens_bounds() -> tuple[int, int, int, int]:
+    """(left, top, right, bottom) of the rectangle around all monitors."""
+    left = win32api.GetSystemMetrics(win32con.SM_XVIRTUALSCREEN)
+    top = win32api.GetSystemMetrics(win32con.SM_YVIRTUALSCREEN)
+    width = win32api.GetSystemMetrics(win32con.SM_CXVIRTUALSCREEN)
+    height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
+    return left, top, left + width, top + height
 
 
 def _bring_to_front(window: int):
@@ -188,3 +263,9 @@ class DryRunActions:
 
     def scroll(self, steps: int):
         log.info("[dry-run] scroll %+d", steps)
+
+    def move_pointer(self, hand_position: tuple[float, float] | None):
+        pass  # every frame while pointing: too often to log
+
+    def click(self):
+        log.info("[dry-run] click")

@@ -13,7 +13,6 @@ from handgestures.camera_loop import CameraLoop
 from handgestures.config import load_config
 from handgestures.paths import DATA_DIR, LOG_PATH
 from handgestures.preview_window import PREVIEW_WINDOW_TITLE
-from handgestures.recorder import Recorder, new_recording_path
 from handgestures.tray_icon import create_tray_icon
 
 # The installer checks for this mutex too, to ask the user to quit the app before updating it.
@@ -26,7 +25,6 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Control Windows with hand gestures.")
     parser.add_argument("--dry-run", action="store_true", help="log gestures without performing actions")
     parser.add_argument("--no-preview", action="store_true", help="start with the camera preview hidden")
-    parser.add_argument("--record", action="store_true", help="record hand movements (no camera image) for tuning")
     return parser.parse_args()
 
 
@@ -67,20 +65,14 @@ def main():
     else:
         actions = WindowsActions(config, ignored_window_titles={PREVIEW_WINDOW_TITLE})
 
-    recorder = Recorder(new_recording_path("everyday"), config) if args.record else None
-    if recorder:
-        log.info("Recording hand movements to %s", recorder.path)
-
     state = AppState(show_preview=not args.no_preview)
     tray_icon = create_tray_icon(state)
-    camera_loop = CameraLoop(state, config, actions, recorder)
+    camera_loop = CameraLoop(state, config, actions)
     camera_loop.start()
     try:
         tray_icon.run()  # blocks until Quit
     finally:
         camera_loop.stop()
-        if recorder:
-            recorder.close()
 
 
 if __name__ == "__main__":

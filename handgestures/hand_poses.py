@@ -27,6 +27,7 @@ class Pose(Enum):
     OPEN_PALM = "open palm"
     FIST = "fist"
     TWO_FINGERS = "two fingers"
+    POINTING = "pointing"
     OTHER = "other"
 
 
@@ -50,6 +51,8 @@ def classify_pose(landmarks: Landmarks) -> Pose:
         return Pose.FIST
     if extended == [True, True, False, False]:
         return Pose.TWO_FINGERS
+    if extended == [True, False, False, False]:
+        return Pose.POINTING
     return Pose.OTHER
 
 

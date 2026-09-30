@@ -15,7 +15,6 @@ a = Analysis(
     hiddenimports=["mediapipe.tasks.c"],
     # Shipping the model means the installed app works offline from the first run.
     datas=[(str(ROOT / "models" / "hand_landmarker.task"), "models")],
-    excludes=["pytest"],
 )
 pyz = PYZ(a.pure)
 exe = EXE(

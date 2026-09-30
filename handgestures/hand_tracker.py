@@ -86,12 +86,16 @@ class HandTracker:
         self._one_hand_model.close()
         self._two_hand_model.close()
 
-    def find_hands(self, bgr_frame) -> list[Landmarks]:
-        """Return the landmarks of each hand in the frame (none, one or two), ordered left to right."""
+    def find_hands(self, bgr_frame, look_for_second_hand: bool = True) -> list[Landmarks]:
+        """Return the landmarks of each hand in the frame (none, one or two), ordered left to right.
+
+        With look_for_second_hand False, a lone hand skips the periodic search for a second
+        one, which makes those frames several times slower.
+        """
         rgb_frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
         image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
         now = time.monotonic()
-        if self._should_use_two_hand_model(now):
+        if self._should_use_two_hand_model(now, look_for_second_hand):
             hands = self._two_hand_model.detect(image)
             self._last_second_hand_check = now
             if len(hands) == 2:
@@ -101,9 +105,10 @@ class HandTracker:
         self._hands_in_last_frame = len(hands)
         return sorted(hands, key=lambda hand: palm_center(hand)[0])
 
-    def _should_use_two_hand_model(self, now: float) -> bool:
+    def _should_use_two_hand_model(self, now: float, look_for_second_hand: bool) -> bool:
         if now - self._two_hands_last_seen_time < TWO_HANDS_KEEP_TRACKING_S:
             return True
         # With no hand in view, the one-hand model's own search finds the first hand.
         one_hand_tracked = self._hands_in_last_frame == 1
-        return one_hand_tracked and now - self._last_second_hand_check >= SECOND_HAND_CHECK_INTERVAL_S
+        return (look_for_second_hand and one_hand_tracked
+                and now - self._last_second_hand_check >= SECOND_HAND_CHECK_INTERVAL_S)

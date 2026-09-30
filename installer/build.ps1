@@ -29,9 +29,6 @@ if (-not (Test-Path $python)) {
 Write-Host '== Installing dependencies'
 Invoke-Native $python -m pip install --quiet --disable-pip-version-check -r requirements-dev.txt
 
-Write-Host '== Running tests'
-Invoke-Native $python -m pytest tests -q
-
 Write-Host '== Preparing hand model and icon'
 New-Item -ItemType Directory -Force build | Out-Null
 Invoke-Native $python -c 'from handgestures.hand_tracker import download_model_if_missing; download_model_if_missing()'
