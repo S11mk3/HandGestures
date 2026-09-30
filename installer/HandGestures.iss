@@ -4,6 +4,10 @@
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
+; The version in the setup file's properties must be numbers only, e.g. 1.0.2 for 1.0.2BETA.
+#ifndef FileVersion
+  #define FileVersion AppVersion
+#endif
 #define AppName "HandGestures"
 #define AppExe "HandGestures.exe"
 ; Settings and log; must match DATA_DIR in handgestures\paths.py.
@@ -15,7 +19,7 @@ AppId={{7EF18DFA-1A36-4B3C-BE92-60F2D2231255}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
-VersionInfoVersion={#AppVersion}
+VersionInfoVersion={#FileVersion}
 ; Per-user install: no admin prompt, and matches the per-user settings and autostart.
 PrivilegesRequired=lowest
 DefaultDirName={autopf}\{#AppName}

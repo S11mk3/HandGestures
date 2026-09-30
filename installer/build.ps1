@@ -34,11 +34,12 @@ New-Item -ItemType Directory -Force build | Out-Null
 Invoke-Native $python -c 'from handgestures.hand_tracker import download_model_if_missing; download_model_if_missing()'
 Invoke-Native $python -c "from handgestures.tray_icon import save_icon_file; save_icon_file('build/icon.ico')"
 $version = & $python -c 'import handgestures; print(handgestures.__version__)'
+$fileVersion = [regex]::Match($version, '^\d+(\.\d+)*').Value  # 1.0.2BETA -> 1.0.2
 
 Write-Host '== Bundling app with PyInstaller'
 Invoke-Native $python -m PyInstaller --noconfirm --clean --distpath dist --workpath build\pyinstaller installer\HandGestures.spec
 
 Write-Host "== Compiling installer (version $version)"
-Invoke-Native $iscc /Q "/DAppVersion=$version" installer\HandGestures.iss
+Invoke-Native $iscc /Q "/DAppVersion=$version" "/DFileVersion=$fileVersion" installer\HandGestures.iss
 
 Write-Host "`nDone: dist\HandGestures-Setup-$version.exe"
