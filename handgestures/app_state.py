@@ -1,19 +1,14 @@
-"""State shared by the tray icon (main thread) and the camera loop (background thread)."""
+"""Switches the UI (main thread) flips and the camera thread reads every frame."""
+import threading
 from dataclasses import dataclass, field
-from typing import Callable
 
 
 @dataclass
 class AppState:
     paused: bool = False
-    show_preview: bool = True
-    status: str = "Starting..."
-    # Called after every change; the tray icon sets it to refresh itself.
-    on_change: Callable[[], None] = field(default=lambda: None, repr=False)
-
-    def notify_changed(self):
-        self.on_change()
-
-    def set_status(self, status: str):
-        self.status = status
-        self.notify_changed()
+    # Some window shows the camera image, so the camera thread sends it frames.
+    frames_wanted: bool = False
+    # The gesture guide is open: recognize gestures, but don't perform their actions.
+    practice_mode: bool = False
+    calibration_requested: threading.Event = field(default_factory=threading.Event)
+    calibration_skip_requested: threading.Event = field(default_factory=threading.Event)

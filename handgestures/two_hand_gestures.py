@@ -3,8 +3,8 @@ from collections import deque
 
 from .config import Config
 from .gestures import Cooldown, Gesture, GestureEvent
-from .hand_landmarks import Landmarks
-from .hand_poses import Pose, PoseConfirmer, classify_pose, palm_center
+from .hand_landmarks import Hand
+from .hand_poses import Pose, PoseConfirmer, PoseReader, palm_position
 
 # Each hand must supply at least this share of the change in the gap between them,
 # so one hand swiping beside a still one doesn't count.
@@ -16,10 +16,12 @@ class TwoHandGestures:
 
     def __init__(self, config: Config):
         self.config = config
+        self._left_reader = PoseReader()
+        self._right_reader = PoseReader()
         self._left_pose = PoseConfirmer(config.pose_confirm_s)
         self._right_pose = PoseConfirmer(config.pose_confirm_s)
         self._hands_last_seen_time = float("-inf")
-        self._cooldown = Cooldown(config)
+        self._cooldown = Cooldown(config.cooldown_s, config.opposite_cooldown_s)
         self._palm_path: deque[tuple[float, float, float]] = deque()  # (time, left palm x, right palm x)
 
     @property
@@ -27,11 +29,13 @@ class TwoHandGestures:
         """The confirmed (left, right) poses."""
         return self._left_pose.pose, self._right_pose.pose
 
-    def update(self, hands: tuple[Landmarks, Landmarks] | None, now: float,
+    def update(self, hands: tuple[Hand, Hand] | None, now: float, scale: float = 1.0,
                paused: bool = False) -> list[GestureEvent]:
         if hands is None:
             # A hand hidden for a frame or two (motion blur) doesn't end the gesture.
             if now - self._hands_last_seen_time >= self.config.hand_lost_grace_s:
+                for reader in (self._left_reader, self._right_reader):
+                    reader.reset()
                 self._left_pose.reset()
                 self._right_pose.reset()
                 self._palm_path.clear()
@@ -39,16 +43,16 @@ class TwoHandGestures:
         self._hands_last_seen_time = now
 
         left, right = hands
-        left_pose_changed = self._left_pose.update(classify_pose(left), now)
-        right_pose_changed = self._right_pose.update(classify_pose(right), now)
+        left_pose_changed = self._left_pose.update(self._left_reader.read(left), now)
+        right_pose_changed = self._right_pose.update(self._right_reader.read(right), now)
         if left_pose_changed or right_pose_changed:
             self._palm_path.clear()  # the gesture starts once both palms are confirmed open
         if paused or self.poses != (Pose.OPEN_PALM, Pose.OPEN_PALM):
             self._palm_path.clear()
             return []
-        return self._detect_gap_change(palm_center(left)[0], palm_center(right)[0], now)
+        return self._detect_gap_change(palm_position(left)[0], palm_position(right)[0], now, scale)
 
-    def _detect_gap_change(self, left_x: float, right_x: float, now: float) -> list[GestureEvent]:
+    def _detect_gap_change(self, left_x: float, right_x: float, now: float, scale: float) -> list[GestureEvent]:
         path = self._palm_path
         path.append((now, left_x, right_x))
         while now - path[0][0] > self.config.two_hand_window_s:
@@ -58,7 +62,7 @@ class TwoHandGestures:
         left_hand_moved = left_x - start_left_x  # positive = toward the right
         right_hand_moved = right_x - start_right_x
         gap_change = right_hand_moved - left_hand_moved  # positive = apart
-        if abs(gap_change) < self.config.two_hand_distance:
+        if abs(gap_change) < self.config.two_hand_distance * scale:
             return []
 
         # Moving apart, the left hand goes left and the right hand goes right; together, the reverse.

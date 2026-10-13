@@ -1,0 +1,17 @@
+# Tool settings. Dependencies are pinned in requirements.txt and requirements-dev.txt.
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+# zip() here always pairs sequences of the same length by construction.
+ignore = ["B905"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["synthetic_hands"]

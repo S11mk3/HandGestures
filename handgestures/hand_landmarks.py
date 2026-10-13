@@ -1,11 +1,11 @@
-"""The 21 points MediaPipe reports for a hand.
+"""The 21 points MediaPipe reports for a hand, and a hand as seen in one frame.
 
 Finger joints from the palm out: MCP (knuckle), PIP (middle joint), DIP (last joint), TIP.
 """
+from dataclasses import dataclass
 from enum import IntEnum
 
-# One hand: 21 (x, y, z) points, in HandLandmark order. x and y are fractions of
-# the frame's width and height, with y growing downward.
+# One hand: 21 (x, y, z) points, in HandLandmark order.
 Landmarks = list[tuple[float, float, float]]
 
 
@@ -41,3 +41,24 @@ HAND_CONNECTIONS = [
     (9, 13), (13, 14), (14, 15), (15, 16),
     (13, 17), (0, 17), (17, 18), (18, 19), (19, 20),
 ]
+
+
+@dataclass(frozen=True)
+class Hand:
+    """One hand in one frame.
+
+    `image` places the hand in the frame: x and y are fractions of the frame's width and height
+    (the frame is mirrored, so x grows toward the user's right; y grows downward).
+    `world` is its true 3D shape in meters, whatever its distance or angle to the camera:
+    what to use for judging finger bends and gaps.
+    """
+    image: Landmarks
+    world: Landmarks
+    aspect: float = 0.75  # the frame's height / width
+    handedness: str = ""  # "Left" or "Right"
+    score: float = 1.0  # how sure MediaPipe is of the handedness, 0-1
+
+    def point(self, landmark: int) -> tuple[float, float]:
+        """Where a landmark is, in frame widths along both axes, so distances compare alike in any direction."""
+        x, y, _ = self.image[landmark]
+        return x, y * self.aspect

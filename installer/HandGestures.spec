@@ -1,5 +1,5 @@
 # PyInstaller spec for the standalone app in dist\HandGestures. Run installer\build.ps1
-# rather than this directly: it downloads the hand model and makes the icon first.
+# rather than this directly: it downloads the hand model first.
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_dynamic_libs
@@ -15,6 +15,8 @@ a = Analysis(
     hiddenimports=["mediapipe.tasks.c"],
     # Shipping the model means the installed app works offline from the first run.
     datas=[(str(ROOT / "models" / "hand_landmarker.task"), "models")],
+    # Never imported by the app. (matplotlib and sounddevice are: importing mediapipe loads them.)
+    excludes=["tkinter", "IPython", "pytest", "PyInstaller"],
 )
 pyz = PYZ(a.pure)
 exe = EXE(
@@ -23,8 +25,10 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name="HandGestures",
-    icon=str(ROOT / "build" / "icon.ico"),
+    icon=str(ROOT / "assets" / "icon.ico"),
     console=False,
     upx=False,  # UPX-packed executables are a common antivirus false positive
 )
+# A folder rather than a single .exe: it starts faster, and keeps the Qt libraries as separate,
+# replaceable files, as their LGPL license requires.
 coll = COLLECT(exe, a.binaries, a.datas, name="HandGestures", upx=False)

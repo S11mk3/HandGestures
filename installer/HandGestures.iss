@@ -4,12 +4,13 @@
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
-; The version in the setup file's properties must be numbers only, e.g. 1.0.2 for 1.0.2BETA.
+; The version in the setup file's properties must be numbers only, e.g. 2.0.0 for 2.0.0b1.
 #ifndef FileVersion
   #define FileVersion AppVersion
 #endif
 #define AppName "HandGestures"
 #define AppExe "HandGestures.exe"
+#define AppPublisher "Andrija Simic"
 ; Settings and log; must match DATA_DIR in handgestures\paths.py.
 #define DataDir "{localappdata}\HandGestures"
 
@@ -19,18 +20,21 @@ AppId={{7EF18DFA-1A36-4B3C-BE92-60F2D2231255}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
+AppPublisher={#AppPublisher}
+AppCopyright=Copyright (c) 2026 {#AppPublisher}
 VersionInfoVersion={#FileVersion}
 ; Per-user install: no admin prompt, and matches the per-user settings and autostart.
 PrivilegesRequired=lowest
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
-; Must match SINGLE_INSTANCE_MUTEX_NAME in main.py: setup asks the user to quit the app before replacing it.
+; Must match SINGLE_INSTANCE_MUTEX_NAME in handgestures\app.py: setup asks the user to quit the app before replacing it.
 AppMutex=HandGesturesRunning
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
-SetupIconFile=..\build\icon.ico
+SetupIconFile=..\assets\icon.ico
+LicenseFile=..\LICENSE
 UninstallDisplayIcon={app}\{#AppExe}
 WizardStyle=modern
 Compression=lzma2/max
@@ -44,10 +48,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\dist\{#AppName}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; The About box links to the notices next to the .exe.
+Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"
+Source: "..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"
 
 [Dirs]
 ; Created now so the "Settings and log" shortcut works before the first run.
 Name: "{#DataDir}"; Flags: uninsneveruninstall
+
+[InstallDelete]
+; The bundled libraries change between versions: remove the old ones rather than leave them mixed in.
+Type: filesandordirs; Name: "{app}\_internal"
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"
@@ -74,6 +85,9 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   DataDir: String;
 begin
+  // The app's Settings can turn on start at sign-in too, so the entry may exist without the task.
+  if CurUninstallStep = usUninstall then
+    RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', '{#AppName}');
   DataDir := ExpandConstant('{#DataDir}');
   if (CurUninstallStep = usPostUninstall) and DirExists(DataDir) then
     if SuppressibleMsgBox('Also delete your {#AppName} settings and log?' + #13#10#13#10 + DataDir,

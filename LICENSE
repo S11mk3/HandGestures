@@ -1,0 +1,20 @@
+HandGestures
+Copyright (c) 2026 Andrija Simic. All rights reserved.
+
+This software, including its source code, is proprietary.
+
+You may install and use the official HandGestures release on your own computers.
+
+Without the copyright holder's prior written permission, you may not copy, modify,
+distribute, sublicense, rent or sell this software or its source code, in whole or in part,
+or create works based on it.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+HandGestures includes third-party components, which remain under their own licenses.
+See THIRD_PARTY_NOTICES.md.

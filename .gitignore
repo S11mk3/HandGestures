@@ -1,11 +1,16 @@
 # Python
 .venv/
 __pycache__/
+.pytest_cache/
+.ruff_cache/
 
 # Created at run time
 models/
 config.json
-handgestures.log
+config.tmp
+calibration.json
+window_state.ini
+handgestures.log*
 
 # Installer build output
 build/

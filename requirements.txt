@@ -1,7 +1,11 @@
-mediapipe==1.0.1
+# Pinned, so every build bundles exactly what was tested.
+# Windows Smart App Control blocks DLLs it doesn't yet trust: the native libraries of
+# mediapipe 1.0.1 and numpy 2.5.x were blocked on a test PC, these versions load.
+mediapipe==1.1.0
+numpy==2.4.6
 # The OpenCV build mediapipe itself depends on. Don't add opencv-python too: both install cv2.
 opencv-contrib-python==5.0.0.93
-Pillow==12.1.1
-PyAutoGUI==0.9.54
-pystray==0.19.5
+PySide6-Essentials==6.12.0
 pywin32==311
+# Camera names for the Settings window.
+pygrabber==0.2

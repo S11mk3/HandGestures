@@ -5,4 +5,5 @@ import os
 # and under 1 s with them off. OpenCV reads this once, so it must be set before cv2 is imported.
 os.environ.setdefault("OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS", "0")
 
-__version__ = "1.0.2BETA"
+__version__ = "2.0.0"
+__copyright__ = "© 2026 Andrija Simic. All rights reserved."

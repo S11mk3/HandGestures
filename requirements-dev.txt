@@ -1,2 +1,6 @@
 -r requirements.txt
 pyinstaller==6.21.0
+pytest==9.1.1
+ruff==0.17.0
+# Only for tools/make_icon.py, which writes assets/icon.ico.
+Pillow==12.1.1
