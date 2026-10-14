@@ -1,4 +1,4 @@
-"""Starting HandGestures when the user signs in to Windows, through the registry's Run key."""
+"""Starting Hard2Gesture when the user signs in to Windows, through the registry's Run key."""
 import contextlib
 import logging
 import sys
@@ -10,7 +10,7 @@ from .paths import IS_FROZEN
 log = logging.getLogger(__name__)
 
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
-VALUE_NAME = "HandGestures"  # must match the [Registry] entry in installer\HandGestures.iss
+VALUE_NAME = "Hard2Gesture"  # must match the [Registry] entry in installer\Hard2Gesture.iss
 
 
 def is_enabled() -> bool:

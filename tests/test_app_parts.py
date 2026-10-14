@@ -1,13 +1,13 @@
 """Tests for the smaller parts: bindings, cooldown, duplicate hands, the battery saver, input structures."""
 import ctypes
 
-from handgestures.actions import ActionRunner
-from handgestures.bindings import ACTIONS, BINDABLE_GESTURES, DEFAULT_GESTURE_ACTIONS, describe
-from handgestures.gestures import Cooldown, Gesture, GestureEvent
-from handgestures.hand_poses import Pose
-from handgestures.hand_tracker import remove_duplicate_hands
-from handgestures.tracking_loop import IDLE_AFTER_S, IDLE_TRACKING_FPS, TrackingRate
-from handgestures.windows_input import INPUT
+from hard2gesture.actions import ActionRunner
+from hard2gesture.bindings import ACTIONS, BINDABLE_GESTURES, DEFAULT_GESTURE_ACTIONS, describe
+from hard2gesture.gestures import Cooldown, Gesture, GestureEvent
+from hard2gesture.hand_poses import Pose
+from hard2gesture.hand_tracker import remove_duplicate_hands
+from hard2gesture.tracking_loop import IDLE_AFTER_S, IDLE_TRACKING_FPS, TrackingRate
+from hard2gesture.windows_input import INPUT
 
 from synthetic_hands import make_hand
 

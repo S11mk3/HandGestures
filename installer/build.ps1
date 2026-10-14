@@ -1,5 +1,5 @@
-# Builds dist\HandGestures-Setup-<version>.exe: the app bundled by PyInstaller, then
-# wrapped in a Windows installer by Inno Setup. The version comes from handgestures\__init__.py.
+# Builds dist\Hard2Gesture-Setup-<version>.exe: the app bundled by PyInstaller, then
+# wrapped in a Windows installer by Inno Setup. The version comes from hard2gesture\__init__.py.
 #
 #   powershell -ExecutionPolicy Bypass -File installer\build.ps1
 $ErrorActionPreference = 'Stop'
@@ -34,15 +34,15 @@ Write-Host '== Running tests'
 Invoke-Native $python -m pytest -q -p no:cacheprovider
 
 Write-Host '== Preparing hand model'
-Invoke-Native $python -c 'from handgestures.hand_tracker import download_model_if_missing; download_model_if_missing()'
-$version = & $python -c 'import handgestures; print(handgestures.__version__)'
+Invoke-Native $python -c 'from hard2gesture.hand_tracker import download_model_if_missing; download_model_if_missing()'
+$version = & $python -c 'import hard2gesture; print(hard2gesture.__version__)'
 $fileVersion = [regex]::Match($version, '^\d+(\.\d+)*').Value  # 2.0.0b1 -> 2.0.0
 
 Write-Host '== Bundling app with PyInstaller'
-Invoke-Native $python -m PyInstaller --noconfirm --clean --distpath dist --workpath build\pyinstaller installer\HandGestures.spec
-Invoke-Native $python tools\collect_licenses.py dist\HandGestures
+Invoke-Native $python -m PyInstaller --noconfirm --clean --distpath dist --workpath build\pyinstaller installer\Hard2Gesture.spec
+Invoke-Native $python tools\collect_licenses.py dist\Hard2Gesture
 
 Write-Host "== Compiling installer (version $version)"
-Invoke-Native $iscc /Q "/DAppVersion=$version" "/DFileVersion=$fileVersion" installer\HandGestures.iss
+Invoke-Native $iscc /Q "/DAppVersion=$version" "/DFileVersion=$fileVersion" installer\Hard2Gesture.iss
 
-Write-Host "`nDone: dist\HandGestures-Setup-$version.exe"
+Write-Host "`nDone: dist\Hard2Gesture-Setup-$version.exe"

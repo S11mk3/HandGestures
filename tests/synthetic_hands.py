@@ -2,11 +2,11 @@
 hands to a GestureDetector frame by frame."""
 from math import cos, hypot, radians, sin
 
-from handgestures.config import Config
-from handgestures.gesture_detector import GestureDetector
-from handgestures.gestures import GestureEvent
-from handgestures.hand_landmarks import Hand
-from handgestures.hand_poses import REFERENCE_PALM_LENGTH, Pose
+from hard2gesture.config import Config
+from hard2gesture.gesture_detector import GestureDetector
+from hard2gesture.gestures import GestureEvent
+from hard2gesture.hand_landmarks import Hand
+from hard2gesture.hand_poses import REFERENCE_PALM_LENGTH, Pose
 
 FPS = 30
 FRAME_INTERVAL_S = 1 / FPS
@@ -14,7 +14,7 @@ ASPECT = 0.75  # a 640x480 frame
 PALM_LENGTH_M = 0.09  # an adult's wrist to middle knuckle
 
 # Offsets from the wrist for an upright right hand facing the camera, fingers pointing up (-y),
-# keyed by landmark index (see handgestures/hand_landmarks.py). Units: _UNIT is one palm length.
+# keyed by landmark index (see hard2gesture/hand_landmarks.py). Units: _UNIT is one palm length.
 _UNIT = hypot(0.02, 0.16)
 THUMB = {1: (-0.05, -0.04), 2: (-0.09, -0.07), 3: (-0.12, -0.10), 4: (-0.14, -0.13)}
 MCP = {5: (-0.06, -0.15), 9: (-0.02, -0.16), 13: (0.02, -0.15), 17: (0.06, -0.13)}

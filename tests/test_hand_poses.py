@@ -2,8 +2,8 @@ from math import cos, dist, radians, sin
 
 import pytest
 
-from handgestures.hand_landmarks import Hand
-from handgestures.hand_poses import (
+from hard2gesture.hand_landmarks import Hand
+from hard2gesture.hand_poses import (
     REFERENCE_PALM_LENGTH,
     HandScale,
     Pose,

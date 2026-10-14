@@ -20,7 +20,7 @@ class PreviewWindow(QWidget):
         super().__init__(None, Qt.WindowType.Tool | Qt.WindowType.WindowStaysOnTopHint
                          | Qt.WindowType.WindowDoesNotAcceptFocus)
         self._window_state = window_state
-        self.setWindowTitle("HandGestures")
+        self.setWindowTitle("Hard2Gesture")
         self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
         self.camera_view = CameraView(self)
         layout = QVBoxLayout(self)

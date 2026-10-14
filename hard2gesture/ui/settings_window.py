@@ -94,7 +94,7 @@ class SettingsWindow(QWidget):
     def __init__(self, store: ConfigStore):
         super().__init__()
         self._store = store
-        self.setWindowTitle("HandGestures Settings")
+        self.setWindowTitle("Hard2Gesture Settings")
         self.setMinimumWidth(560)
 
         tabs = QTabWidget()
@@ -131,10 +131,10 @@ class SettingsWindow(QWidget):
     # Tabs
 
     def _general_tab(self) -> QWidget:
-        self._autostart = QCheckBox("Start HandGestures when I sign in to Windows")
+        self._autostart = QCheckBox("Start Hard2Gesture when I sign in to Windows")
         self._autostart.toggled.connect(self._set_autostart)
-        self._calibrate_on_start = self._checkbox("Calibrate every time HandGestures starts", "calibrate_on_start")
-        self._show_preview_on_start = self._checkbox("Show the camera preview when HandGestures starts",
+        self._calibrate_on_start = self._checkbox("Calibrate every time Hard2Gesture starts", "calibrate_on_start")
+        self._show_preview_on_start = self._checkbox("Show the camera preview when Hard2Gesture starts",
                                                      "show_preview_on_start")
         self._battery_saver = self._checkbox("Battery saver: look for hands less often while none are in view",
                                              "battery_saver")
@@ -294,7 +294,7 @@ class SettingsWindow(QWidget):
             autostart.set_enabled(enabled)
         except OSError as error:
             log.warning("Could not change start at sign-in: %s", error)
-            QMessageBox.warning(self, "HandGestures", f"Couldn't change the startup setting:\n{error}")
+            QMessageBox.warning(self, "Hard2Gesture", f"Couldn't change the startup setting:\n{error}")
 
     def _reset(self):
         answer = QMessageBox.question(self, "Reset settings", "Put every setting back to its default?")

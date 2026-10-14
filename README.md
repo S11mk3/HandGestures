@@ -1,15 +1,17 @@
 <div align="center">
 
-# HandGestures
+# Hard2Gesture
 
 **CONTROL WINDOWS WITH YOUR HANDS.**
 
 Point to move the pointer, pinch to click, swipe to switch and arrange windows, hold a fist to
-pause the music. HandGestures turns hand gestures in front of your webcam into Windows commands.
+pause the music. Hard2Gesture turns hand gestures in front of your webcam into Windows commands.
 Hand tracking runs on your PC, so it works offline and the camera image never leaves your computer.
 
-**[Download the latest release](https://github.com/S11mk3/HandGestures/releases/latest)** ·
-[Website and patch notes](https://andrijasimic.vercel.app/handgestures.html)
+**[Download the latest release](https://github.com/S11mk3/Hard2Gesture/releases/latest)** ·
+[Website and patch notes](https://andrijasimic.vercel.app/hard2gesture.html)
+
+<sub>Formerly HandGestures. Installing over it keeps your settings and calibration.</sub>
 
 <img src="docs/guide.png" alt="The gesture guide: a live camera view with the tracked hand, and a card for every gesture that lights up when it's recognized" width="760">
 
@@ -19,8 +21,8 @@ Hand tracking runs on your PC, so it works offline and the camera image never le
 
 ## Install
 
-Download `HandGestures-Setup-<version>.exe` from the
-[latest release](https://github.com/S11mk3/HandGestures/releases/latest) and run it.
+Download `Hard2Gesture-Setup-<version>.exe` from the
+[latest release](https://github.com/S11mk3/Hard2Gesture/releases/latest) and run it.
 
 - **You need:** Windows 10 or 11 (64-bit) and a webcam, built-in or USB.
 - **No administrator rights.** It installs just for you, under `%LOCALAPPDATA%\Programs`.
@@ -28,27 +30,27 @@ Download `HandGestures-Setup-<version>.exe` from the
 - **Start at sign-in** is a checkbox during setup. It then starts in the tray without the camera
   preview. You can change it later in Settings.
 
-> **"Windows protected your PC"?** Click **More info → Run anyway**. HandGestures isn't signed
+> **"Windows protected your PC"?** Click **More info → Run anyway**. Hard2Gesture isn't signed
 > with a paid code-signing certificate, and Windows shows that warning for every unsigned
 > program from a publisher it hasn't seen before.
 
-**Updating:** run the new setup file. It asks you to quit HandGestures first, and keeps your
+**Updating:** run the new setup file. It asks you to quit Hard2Gesture first, and keeps your
 settings and calibration.
-**Uninstalling:** in Windows, *Settings → Apps → Installed apps → HandGestures*. It asks whether
+**Uninstalling:** in Windows, *Settings → Apps → Installed apps → Hard2Gesture*. It asks whether
 to delete your settings and log too.
 
 ## First start
 
 <img src="docs/calibration.png" alt="Calibration: the camera view with a progress ring while it measures an open hand" width="400" align="right">
 
-1. **Calibration.** HandGestures checks your lighting, then asks you to hold up an open hand for
+1. **Calibration.** Hard2Gesture checks your lighting, then asks you to hold up an open hand for
    a moment. That tunes the gestures to your hand, your camera and your distance from it, and
    picks how much to smooth the pointer for your camera. It takes about 5 seconds. You can skip
    it, which reuses your last calibration, or turn it off in Settings.
 2. **Gesture guide.** Then the guide opens with every gesture. It starts in **practice mode**:
    gestures light up when they're recognized, but nothing happens on your PC, so you can try
    them safely.
-3. **The tray icon.** HandGestures lives in the system tray. Click the icon to pause or resume.
+3. **The tray icon.** Hard2Gesture lives in the system tray. Click the icon to pause or resume.
    Right-click it for the camera preview, Recalibrate, Settings, the gesture guide and Quit.
    Its color shows what it's doing:
    🟢 running · ⚪ paused · 🔵 calibrating · 🟠 something needs your attention (it also shows
@@ -82,7 +84,7 @@ pointer works across all your monitors.
 
 **Swipes** have to be quick and deliberate, under half a second. How far they must go follows
 how big your hand looks to the camera, so gestures feel the same close up and far away. After
-each gesture HandGestures waits a moment, so one movement never fires two commands.
+each gesture Hard2Gesture waits a moment, so one movement never fires two commands.
 
 ## Settings
 
@@ -96,10 +98,10 @@ Right-click the tray icon and choose **Settings**. Changes apply immediately, wi
 - **Pointer:** speed, acceleration, smoothing, and how firmly you must pinch to click.
 - **Camera:** which webcam to use, recalibrate, tracking details on the preview.
 
-Settings, calibration and the log are kept in `%LOCALAPPDATA%\HandGestures`. The tray menu
+Settings, calibration and the log are kept in `%LOCALAPPDATA%\Hard2Gesture`. The tray menu
 opens that folder.
 
-**Battery saver** (on by default): after 5 seconds with no hand in view, HandGestures looks for
+**Battery saver** (on by default): after 5 seconds with no hand in view, Hard2Gesture looks for
 one 8 times a second instead of in every frame, and even less often while paused.
 
 <br clear="right">
@@ -107,7 +109,7 @@ one 8 times a second instead of in every frame, and even less often while paused
 ## Tips for reliable tracking
 
 - **Light:** face a window or lamp. Bright light *behind* you turns your hand into a silhouette.
-  HandGestures brightens a dim picture by itself, and calibration tells you when the light is a
+  Hard2Gesture brightens a dim picture by itself, and calibration tells you when the light is a
   problem.
 - **Distance:** about an arm's length from the camera works best, with your whole hand in view.
 - **Clear gestures:** hold poses clearly. A swipe is a quick, deliberate sweep, not a drift.
@@ -122,14 +124,14 @@ one 8 times a second instead of in every frame, and even less often while paused
 | Gestures trigger by accident | Pause from the tray while you're not using it, or set that gesture to *Do nothing* in Settings. |
 | The pointer is jittery | Move **Smoothing** toward *Steady* in Settings → Pointer, or add light and recalibrate. |
 | Clicks don't register | Move **Pinch to click** toward *Light*. |
-| Nothing happens in some apps | Windows blocks input to apps running as administrator, unless HandGestures runs as administrator too. |
+| Nothing happens in some apps | Windows blocks input to apps running as administrator, unless Hard2Gesture runs as administrator too. |
 | Starting it again does nothing | It's already running: the second start opens its Settings. Look for the icon in the tray (it may be under the **^** arrow). |
 
-The log (`handgestures.log`, in the folder above) records what was recognized and any errors.
+The log (`hard2gesture.log`, in the folder above) records what was recognized and any errors.
 
 ## Privacy
 
-HandGestures has no network features. Each camera frame is processed in memory and then
+Hard2Gesture has no network features. Each camera frame is processed in memory and then
 discarded. Nothing is stored or sent anywhere. Calibration saves only measurements, such as how
 big your hand looks to the camera, never an image.
 
@@ -137,11 +139,11 @@ big your hand looks to the camera, never an image.
 
 The current version is **1.1.2 (beta)**. It adds the settings window, calibration, the gesture
 guide and gestures you can rebind. Patch notes for every version, in English and Serbian, are on
-the [website](https://andrijasimic.vercel.app/handgestures.html#patch-notes).
+the [website](https://andrijasimic.vercel.app/hard2gesture.html#patch-notes).
 
 ## License
 
-HandGestures is proprietary software. You may install and use the official release on your own
+Hard2Gesture is proprietary software. You may install and use the official release on your own
 computers. Copying, modifying or redistributing it, or its source code, needs the author's
 written permission. See [LICENSE](LICENSE).
 
@@ -180,8 +182,8 @@ powershell -ExecutionPolicy Bypass -File installer\build.ps1
 ```
 
 This runs the tests, bundles the app with PyInstaller and creates
-`dist\HandGestures-Setup-<version>.exe`. The version comes from `__version__` in
-`handgestures\__init__.py`. Pushing a tag that matches it, such as `v1.1.2`, builds the
+`dist\Hard2Gesture-Setup-<version>.exe`. The version comes from `__version__` in
+`hard2gesture\__init__.py`. Pushing a tag that matches it, such as `v1.1.2`, builds the
 installer on GitHub Actions and attaches it to a release
 ([`release.yml`](.github/workflows/release.yml)).
 
@@ -189,7 +191,7 @@ installer on GitHub Actions and attaches it to a release
 
 ```
 main.py                    entry point (the installer bundles this)
-handgestures/
+hard2gesture/
   app.py                   starts the app: tray, windows, camera thread
   tracking_loop.py         camera frame → hands → gestures → actions; battery saver, reconnecting
   camera.py                reads the webcam, keeping only the newest frame

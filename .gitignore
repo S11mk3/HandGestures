@@ -10,7 +10,7 @@ config.json
 config.tmp
 calibration.json
 window_state.ini
-handgestures.log*
+hard2gesture.log*
 
 # Installer build output
 build/

@@ -1,4 +1,4 @@
-"""Starts HandGestures: the tray icon and windows on the main thread, the camera on a background thread."""
+"""Starts Hard2Gesture: the tray icon and windows on the main thread, the camera on a background thread."""
 import argparse
 import getpass
 import logging
@@ -31,9 +31,9 @@ from .ui.settings_window import SettingsWindow
 from .ui.tray import Tray
 
 # The installer checks for this mutex too, to ask the user to quit the app before updating it.
-SINGLE_INSTANCE_MUTEX_NAME = "HandGesturesRunning"
+SINGLE_INSTANCE_MUTEX_NAME = "Hard2GestureRunning"
 # A second copy tells the running one, through this local socket, to open its settings.
-INSTANCE_SERVER_NAME = f"HandGestures-{getpass.getuser()}"
+INSTANCE_SERVER_NAME = f"Hard2Gesture-{getpass.getuser()}"
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def acquire_single_instance_lock():
-    """Return a handle to keep open until exit, or None if HandGestures is already running.
+    """Return a handle to keep open until exit, or None if Hard2Gesture is already running.
 
     A second copy would fight over the camera and perform every action twice.
     """
@@ -170,8 +170,8 @@ class AppController(QObject):
     def show_about(self):
         notices = (APP_DIR / "THIRD_PARTY_NOTICES.md").as_uri()
         QMessageBox.about(
-            None, "About HandGestures",
-            f"<h3>HandGestures {__version__}</h3>"
+            None, "About Hard2Gesture",
+            f"<h3>Hard2Gesture {__version__}</h3>"
             "<p>Control Windows with hand gestures through your webcam.</p>"
             "<p>Hand tracking runs on this PC. The camera image never leaves it and is never saved.</p>"
             f"<p>Settings, calibration and log: <a href='{DATA_DIR.as_uri()}'>{DATA_DIR}</a></p>"
@@ -239,7 +239,7 @@ class AppController(QObject):
             self.set_preview_visible(True)
         if not self._store.config.first_run_done:
             self._store.update(first_run_done=True)
-            self._tray.notify("HandGestures is running. Click its icon in the tray to pause, "
+            self._tray.notify("Hard2Gesture is running. Click its icon in the tray to pause, "
                               "or right-click it for settings.")
             QTimer.singleShot(500, self.show_guide)
 
@@ -270,14 +270,14 @@ def main() -> int:
     # Creating the QApplication makes the process DPI aware (per monitor), so cursor positions
     # and screen sizes are in physical pixels: it must come before any of those are read.
     app = QApplication(sys.argv)
-    app.setApplicationName("HandGestures")
+    app.setApplicationName("Hard2Gesture")
     app.setApplicationVersion(__version__)
     app.setQuitOnLastWindowClosed(False)  # the tray icon keeps it running
     app.setWindowIcon(app_icon())
 
     instance_lock = acquire_single_instance_lock()  # released when the process exits
     if instance_lock is None:
-        log.info("HandGestures is already running; asking it to show its settings")
+        log.info("Hard2Gesture is already running; asking it to show its settings")
         notify_running_instance()
         return 0
 
@@ -286,8 +286,8 @@ def main() -> int:
         controller.start()
     except Exception as error:
         log.exception("Could not start")
-        QMessageBox.critical(None, "HandGestures",
-                             f"HandGestures couldn't start:\n{error}\n\nDetails are in {LOG_PATH}.")
+        QMessageBox.critical(None, "Hard2Gesture",
+                             f"Hard2Gesture couldn't start:\n{error}\n\nDetails are in {LOG_PATH}.")
         return 1
     try:
         return app.exec()

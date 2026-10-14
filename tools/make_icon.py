@@ -1,6 +1,6 @@
 """Writes assets/icon.ico (for the .exe and the installer) and assets/icon.png from the app's own icon drawing.
 
-Run after changing handgestures/ui/icons.py:  .venv/Scripts/python tools/make_icon.py
+Run after changing hard2gesture/ui/icons.py:  .venv/Scripts/python tools/make_icon.py
 """
 import os
 import sys
@@ -15,7 +15,7 @@ from PIL import Image  # noqa: E402
 from PySide6.QtCore import QBuffer, QIODevice  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 
-from handgestures.ui.icons import ICON_SIZES, IconState, draw_icon  # noqa: E402
+from hard2gesture.ui.icons import ICON_SIZES, IconState, draw_icon  # noqa: E402
 
 
 def render(size: int) -> Image.Image:

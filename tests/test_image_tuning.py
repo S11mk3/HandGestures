@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from handgestures.image_tuning import (
+from hard2gesture.image_tuning import (
     TARGET_BRIGHTNESS,
     ImageTuner,
     LightingVerdict,

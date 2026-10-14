@@ -1,10 +1,10 @@
 import pytest
 
-from handgestures.cursor_motion import CursorMapper, acceleration_gain
-from handgestures.gestures import Gesture
-from handgestures.hand_poses import Pose
-from handgestures.pointer_driver import PointerController, PointerDriver
-from handgestures.pointer_gestures import OneEuroFilter, PointerGestures, pinch_ratio
+from hard2gesture.cursor_motion import CursorMapper, acceleration_gain
+from hard2gesture.gestures import Gesture
+from hard2gesture.hand_poses import Pose
+from hard2gesture.pointer_driver import PointerController, PointerDriver
+from hard2gesture.pointer_gestures import OneEuroFilter, PointerGestures, pinch_ratio
 
 from synthetic_hands import FRAME_INTERVAL_S, make_hand
 
@@ -188,7 +188,7 @@ def test_driver_clicks_at_the_requested_point():
 
 def test_controller_starts_from_the_cursor_and_double_clicks_in_place():
     cursor = FakeCursor((500, 400))
-    from handgestures.config import Config
+    from hard2gesture.config import Config
 
     controller = PointerController(Config(), cursor)
     try:

@@ -1,5 +1,5 @@
-; Inno Setup script for HandGestures. Build with installer\build.ps1, which bundles
-; the app into dist\HandGestures first and passes the version in /DAppVersion.
+; Inno Setup script for Hard2Gesture. Build with installer\build.ps1, which bundles
+; the app into dist\Hard2Gesture first and passes the version in /DAppVersion.
 
 #ifndef AppVersion
   #define AppVersion "0.0.0"
@@ -8,11 +8,11 @@
 #ifndef FileVersion
   #define FileVersion AppVersion
 #endif
-#define AppName "HandGestures"
-#define AppExe "HandGestures.exe"
+#define AppName "Hard2Gesture"
+#define AppExe "Hard2Gesture.exe"
 #define AppPublisher "Andrija Simic"
-; Settings and log; must match DATA_DIR in handgestures\paths.py.
-#define DataDir "{localappdata}\HandGestures"
+; Settings and log; must match DATA_DIR in hard2gesture\paths.py.
+#define DataDir "{localappdata}\Hard2Gesture"
 
 [Setup]
 ; Never change AppId: it's how later versions find and upgrade this install.
@@ -28,8 +28,13 @@ PrivilegesRequired=lowest
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
-; Must match SINGLE_INSTANCE_MUTEX_NAME in handgestures\app.py: setup asks the user to quit the app before replacing it.
-AppMutex=HandGesturesRunning
+; Must match SINGLE_INSTANCE_MUTEX_NAME in hard2gesture\app.py: setup asks the user to quit the app before replacing it.
+; HandGesturesRunning is the same mutex from before the app was renamed from HandGestures.
+AppMutex=Hard2GestureRunning,HandGesturesRunning
+; Versions from before the rename were installed in a HandGestures folder and Start Menu group.
+; Install into the new ones instead; [InstallDelete] removes the old ones.
+UsePreviousAppDir=no
+UsePreviousGroup=no
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
@@ -59,6 +64,10 @@ Name: "{#DataDir}"; Flags: uninsneveruninstall
 [InstallDelete]
 ; The bundled libraries change between versions: remove the old ones rather than leave them mixed in.
 Type: filesandordirs; Name: "{app}\_internal"
+; What a version from before the rename left behind: its program folder and shortcuts.
+Type: filesandordirs; Name: "{autopf}\HandGestures"
+Type: filesandordirs; Name: "{autoprograms}\HandGestures"
+Type: files; Name: "{autodesktop}\HandGestures.lnk"
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"
@@ -69,14 +78,28 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 [Registry]
 ; At sign-in, start quietly in the tray; the preview can be shown from the tray menu.
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "{#AppName}"; ValueData: """{app}\{#AppExe}"" --no-preview"; Flags: uninsdeletevalue; Tasks: autostart
+; The sign-in entry of a version from before the rename.
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: none; ValueName: "HandGestures"; Flags: deletevalue
 
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-// A reinstall without the autostart task must not leave the old autostart entry behind.
 procedure CurStepChanged(CurStep: TSetupStep);
+var
+  OldDataDir, DataDir: String;
 begin
+  // Settings, calibration and log from before the rename move to the new folder. This runs
+  // before [Dirs] creates that folder, so it only exists already if this version ran before.
+  if CurStep = ssInstall then
+  begin
+    OldDataDir := ExpandConstant('{localappdata}\HandGestures');
+    DataDir := ExpandConstant('{#DataDir}');
+    if DirExists(OldDataDir) and not DirExists(DataDir) then
+      if not RenameFile(OldDataDir, DataDir) then
+        Log('Could not move ' + OldDataDir + ' to ' + DataDir);
+  end;
+  // A reinstall without the autostart task must not leave the old autostart entry behind.
   if (CurStep = ssPostInstall) and not WizardIsTaskSelected('autostart') then
     RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', '{#AppName}');
 end;

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from handgestures.calibration import (
+from hard2gesture.calibration import (
     HAND_TIMEOUT_S,
     LIGHT_CHECK_S,
     MAX_POINTER_CUTOFF_HZ,
@@ -11,8 +11,8 @@ from handgestures.calibration import (
     load_profile,
     save_profile,
 )
-from handgestures.hand_poses import REFERENCE_PALM_LENGTH, Pose
-from handgestures.image_tuning import ImageTuner, LightingVerdict
+from hard2gesture.hand_poses import REFERENCE_PALM_LENGTH, Pose
+from hard2gesture.image_tuning import ImageTuner, LightingVerdict
 
 from synthetic_hands import FRAME_INTERVAL_S, make_hand
 

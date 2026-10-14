@@ -1,7 +1,7 @@
 """Copies the license files of every package the app bundles into <folder>/licenses/<package>/.
 
 Apache-2.0 and the LGPL require shipping the license texts with the app; build.ps1 runs this
-on dist\\HandGestures after PyInstaller.  Usage: python tools/collect_licenses.py dist/HandGestures
+on dist\\Hard2Gesture after PyInstaller.  Usage: python tools/collect_licenses.py dist/Hard2Gesture
 """
 import re
 import shutil

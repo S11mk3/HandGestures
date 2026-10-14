@@ -107,7 +107,7 @@ class GuideWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("HandGestures — Gesture guide")
+        self.setWindowTitle("Hard2Gesture — Gesture guide")
         title = QLabel("Gestures")
         title_font = title.font()
         title_font.setPointSizeF(title_font.pointSizeF() * 1.6)

@@ -9,7 +9,7 @@ from . import __version__
 from .paths import DATA_DIR, LOG_PATH
 
 MAX_LOG_BYTES = 1_000_000
-LOG_BACKUP_COUNT = 2  # handgestures.log.1 and .2
+LOG_BACKUP_COUNT = 2  # hard2gesture.log.1 and .2
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ def setup_logging(verbose: bool = False):
     )
     sys.excepthook = _log_uncaught_exception
     threading.excepthook = _log_uncaught_thread_exception
-    log.info("HandGestures %s, Windows %s, Python %s", __version__, platform.version(), platform.python_version())
+    log.info("Hard2Gesture %s, Windows %s, Python %s", __version__, platform.version(), platform.python_version())
 
 
 def _log_uncaught_exception(exc_type, exc_value, exc_traceback):

@@ -3,8 +3,8 @@ from dataclasses import asdict
 
 import pytest
 
-from handgestures.bindings import DEFAULT_GESTURE_ACTIONS
-from handgestures.config import CONFIG_VERSION, Config, ConfigStore, load_config
+from hard2gesture.bindings import DEFAULT_GESTURE_ACTIONS
+from hard2gesture.config import CONFIG_VERSION, Config, ConfigStore, load_config
 
 
 @pytest.fixture

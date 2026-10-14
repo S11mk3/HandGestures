@@ -40,7 +40,7 @@ class Tray(QObject):
         self._menu.addAction("Settings…", self.settings_requested)
         self._menu.addAction("Gesture guide…", self.guide_requested)
         self._menu.addAction("Open settings and log folder", self.data_folder_requested)
-        self._menu.addAction("About HandGestures", self.about_requested)
+        self._menu.addAction("About Hard2Gesture", self.about_requested)
         self._menu.addSeparator()
         self._menu.addAction("Quit", self.quit_requested)
         self._icon.setContextMenu(self._menu)
@@ -54,7 +54,7 @@ class Tray(QObject):
     def update(self, status: Status, paused: bool, preview_visible: bool):
         state = IconState.PAUSED if paused and status.kind is StatusKind.RUNNING else ICON_STATES[status.kind]
         self._icon.setIcon(self._icons[state])
-        self._icon.setToolTip(f"HandGestures: {'paused' if paused else status.message}"[:127])
+        self._icon.setToolTip(f"Hard2Gesture: {'paused' if paused else status.message}"[:127])
         self._pause_action.setText("Resume" if paused else "Pause")
         self._preview_action.blockSignals(True)
         self._preview_action.setChecked(preview_visible)
@@ -62,7 +62,7 @@ class Tray(QObject):
 
     def notify(self, message: str, warning: bool = False):
         icon = QSystemTrayIcon.MessageIcon.Warning if warning else QSystemTrayIcon.MessageIcon.Information
-        self._icon.showMessage("HandGestures", message, icon, 8000)
+        self._icon.showMessage("Hard2Gesture", message, icon, 8000)
 
     def _on_activated(self, reason: QSystemTrayIcon.ActivationReason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:  # a left click

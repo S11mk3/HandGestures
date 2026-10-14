@@ -1,5 +1,5 @@
-from handgestures.gestures import Gesture, GestureEvent
-from handgestures.hand_poses import Pose
+from hard2gesture.gestures import Gesture, GestureEvent
+from hard2gesture.hand_poses import Pose
 
 from synthetic_hands import HandSimulator
 

@@ -1,7 +1,7 @@
-"""Start HandGestures. The installer bundles this script; see handgestures/app.py."""
+"""Start Hard2Gesture. The installer bundles this script; see hard2gesture/app.py."""
 import sys
 
-from handgestures.app import main
+from hard2gesture.app import main
 
 if __name__ == "__main__":
     sys.exit(main())

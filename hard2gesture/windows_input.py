@@ -1,6 +1,6 @@
 """Synthesized keyboard and mouse input, through the Windows SendInput API.
 
-Windows won't deliver it to apps running as administrator unless HandGestures does too.
+Windows won't deliver it to apps running as administrator unless Hard2Gesture does too.
 """
 import ctypes
 from ctypes import wintypes

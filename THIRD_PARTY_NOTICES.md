@@ -1,8 +1,8 @@
 # Third-party notices
 
-HandGestures is built on the open-source components below. Each remains under its own license.
+Hard2Gesture is built on the open-source components below. Each remains under its own license.
 The installed app includes every component's full license text in its `licenses` folder
-(next to `HandGestures.exe`).
+(next to `Hard2Gesture.exe`).
 
 | Component | Used for | License |
 |---|---|---|
@@ -22,7 +22,7 @@ packaging (Apache-2.0/BSD-2-Clause), six (MIT), certifi (MPL-2.0), cffi (MIT-0),
 
 ## Qt and the LGPL
 
-HandGestures uses Qt under the GNU Lesser General Public License version 3. Qt's libraries
+Hard2Gesture uses Qt under the GNU Lesser General Public License version 3. Qt's libraries
 (`Qt6*.dll`, and the PySide6 and shiboken6 modules) are separate files in the app's `_internal`
 folder, loaded at run time, so you can replace them with your own builds of the same versions.
 Qt's source code is available at <https://download.qt.io/official_releases/qt/> and PySide6's at

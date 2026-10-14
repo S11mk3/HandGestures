@@ -57,7 +57,7 @@ class CalibrationWindow(QWidget):
 
     def __init__(self):
         super().__init__(None, Qt.WindowType.Window | Qt.WindowType.WindowStaysOnTopHint)
-        self.setWindowTitle("HandGestures — Getting ready")
+        self.setWindowTitle("Hard2Gesture — Getting ready")
         # Shown at sign-in too: it mustn't take the keyboard from whatever the user is doing.
         self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
         self._done = False

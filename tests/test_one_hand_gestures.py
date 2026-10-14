@@ -2,10 +2,10 @@ from dataclasses import replace
 
 import pytest
 
-from handgestures.config import Config
-from handgestures.gestures import Gesture, GestureEvent
-from handgestures.hand_poses import REFERENCE_PALM_LENGTH, Pose
-from handgestures.one_hand_gestures import swipes_into_view
+from hard2gesture.config import Config
+from hard2gesture.gestures import Gesture, GestureEvent
+from hard2gesture.hand_poses import REFERENCE_PALM_LENGTH, Pose
+from hard2gesture.one_hand_gestures import swipes_into_view
 
 from synthetic_hands import HandSimulator
 
