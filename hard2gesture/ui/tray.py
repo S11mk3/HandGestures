@@ -31,19 +31,26 @@ class Tray(QObject):
         self._icon.activated.connect(self._on_activated)
 
         self._menu = QMenu()
-        self._pause_action = self._menu.addAction("Pause", self.pause_toggled)
+        self._pause_action = self._add_action("Pause", self.pause_toggled)
         self._preview_action = QAction("Show camera preview", self._menu, checkable=True)
         self._preview_action.toggled.connect(self.preview_toggled)
         self._menu.addAction(self._preview_action)
-        self._menu.addAction("Recalibrate", self.recalibrate_requested)
+        self._add_action("Recalibrate", self.recalibrate_requested)
         self._menu.addSeparator()
-        self._menu.addAction("Settings…", self.settings_requested)
-        self._menu.addAction("Gesture guide…", self.guide_requested)
-        self._menu.addAction("Open settings and log folder", self.data_folder_requested)
-        self._menu.addAction("About Hard2Gesture", self.about_requested)
+        self._add_action("Settings…", self.settings_requested)
+        self._add_action("Gesture guide…", self.guide_requested)
+        self._add_action("Open settings and log folder", self.data_folder_requested)
+        self._add_action("About Hard2Gesture", self.about_requested)
         self._menu.addSeparator()
-        self._menu.addAction("Quit", self.quit_requested)
+        self._add_action("Quit", self.quit_requested)
         self._icon.setContextMenu(self._menu)
+
+    def _add_action(self, text: str, signal) -> QAction:
+        # Connected signal to signal: QMenu.addAction(text, signal) tries to call the signal, which
+        # PySide6 refuses ("native Qt signal instance ... is not callable"), so the item did nothing.
+        action = self._menu.addAction(text)
+        action.triggered.connect(signal)
+        return action
 
     def show(self):
         self._icon.show()

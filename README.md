@@ -137,9 +137,10 @@ big your hand looks to the camera, never an image.
 
 ## What's new
 
-The current version is **1.1.2 (beta)**. It adds the settings window, calibration, the gesture
-guide and gestures you can rebind. Patch notes for every version, in English and Serbian, are on
-the [website](https://andrijasimic.vercel.app/hard2gesture.html#patch-notes).
+The current version is **1.1.3 (beta)**, the first under the name Hard2Gesture. It fixes the tray
+menu, whose items did nothing in 1.1.2. Version 1.1.2 added the settings window, calibration, the
+gesture guide and gestures you can rebind. Patch notes for every version, in English and Serbian,
+are on the [website](https://andrijasimic.vercel.app/hard2gesture.html#patch-notes).
 
 ## License
 
@@ -183,7 +184,7 @@ powershell -ExecutionPolicy Bypass -File installer\build.ps1
 
 This runs the tests, bundles the app with PyInstaller and creates
 `dist\Hard2Gesture-Setup-<version>.exe`. The version comes from `__version__` in
-`hard2gesture\__init__.py`. Pushing a tag that matches it, such as `v1.1.2`, builds the
+`hard2gesture\__init__.py`. Pushing a tag that matches it, such as `v1.1.3`, builds the
 installer on GitHub Actions and attaches it to a release
 ([`release.yml`](.github/workflows/release.yml)).
 
