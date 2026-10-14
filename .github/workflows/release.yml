@@ -1,4 +1,4 @@
-# Push a tag like v2.0.0 (matching __version__ in handgestures/__init__.py) to build the
+# Push a tag like v1.1.2 (matching __version__ in handgestures/__init__.py) to build the
 # installer and publish it as a GitHub release.
 name: Release
 
